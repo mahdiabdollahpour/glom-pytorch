@@ -161,5 +161,7 @@ class Glom(nn.Module):
         if return_all:
             return torch.stack(hiddens)  # return (time step, batch, num columns, levels, dimension)
         if return_class:
-            return self.classifier(torch.stack(hiddens)[-1, :, :, :, :])
+            all = torch.stack(hiddens)
+            batch_size = all.shape[1]
+            return self.classifier(all[-1, :, :, :, :].reshape(batch_size, -1))
         return levels
