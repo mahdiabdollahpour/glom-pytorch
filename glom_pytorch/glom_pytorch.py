@@ -101,6 +101,12 @@ class Glom(nn.Module):
             Rearrange('b c (h p1) (w p2) -> b (h w) (p1 p2 c)', p1=patch_size, p2=patch_size),
             nn.Linear(patch_size ** 2 * 3, dim)
         )
+        self.patches_to_images = nn.Sequential(
+            nn.Linear(dim, patch_size * patch_size * 3),
+            Rearrange('b (h w) (p1 p2 c) -> b c (h p1) (w p2)', p1=patch_size, p2=patch_size,
+                      h=(image_size // patch_size))
+        )
+
         self.pos_emb = nn.Embedding(num_patches, dim)
 
         # initial embeddings for all levels of a column
